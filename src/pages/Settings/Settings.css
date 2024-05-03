@@ -1,0 +1,11 @@
+.task--wrapper::-webkit-scrollbar {
+  width: 3px;
+}
+.task--wrapper::-webkit-scrollbar-track {
+  width: 100%;
+  background-color: #e3e3e3;
+}
+.task--wrapper::-webkit-scrollbar-thumb {
+  width: 100%;
+  background-color: #60e5ae;
+}

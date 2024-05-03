@@ -1,0 +1,205 @@
+/* google fonts */
+
+@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap");
+
+/* google fonts */
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+  font-family: "Poppins", sans-serif;
+  background-color: #FAFAFA;
+}
+
+.form-group input {
+  padding: 0;
+  height: initial;
+  width: initial;
+  margin-bottom: 0;
+  display: none;
+  cursor: pointer;
+}
+
+.form-group label {
+  position: relative;
+  cursor: pointer;
+  color: #667085;
+  padding-left: 8px;
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.form-group label:before {
+  content: "";
+  -webkit-appearance: none;
+  background-color: transparent;
+  border: 2px solid #e1e1e1;
+  padding: 10px;
+  display: inline-block;
+  position: relative;
+  vertical-align: middle;
+  cursor: pointer;
+  margin-right: 5px;
+  border-radius: 6px;
+  left: -8px;
+}
+.select--dropdown .form-group label:before{
+  padding: 8px;
+  border-radius: 4px;
+  margin-right: 3px;
+  top: 9px;
+  left: 10px;
+  position: absolute;
+}
+.select--dropdown .form-group input:checked + label:before{
+  border-color: transparent;
+}
+.select--dropdown .form-group input:checked + label:after {
+  top: 11px;
+  left: 17px;
+  width: 6px;
+  height: 12px;
+}
+.select--dropdown label{
+  padding: 8px 10px 8px 37px;
+  display: block;
+  width: 100%;
+  border-radius: 4px;
+  font-size: 15px;
+}
+.select--dropdown .form-group input:checked + label{
+  background-color: rgba(96, 229, 174, 0.15);
+  color: #1F1F1F;
+}
+.form-group input:checked + label:before {
+  background-color: #60e5ae;
+}
+
+.form-group input:checked + label:after {
+  content: "";
+  display: block;
+  position: absolute;
+  top: 3px;
+  left: 9px;
+  width: 6px;
+  height: 14px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.menu--wrap li a {
+  display: flex;
+  align-items: center;
+  color: white;
+  gap: 10px;
+  transition: all 0.3s ease-in-out;
+}
+.menu--wrap li a:hover {
+  color: #60e5ae;
+}
+.menu--wrap li a svg path {
+  transition: all 0.3s ease-in-out;
+}
+.menu--wrap li a:hover svg path {
+  stroke: #60e5ae;
+}
+.menu--wrap li.spin a:hover svg path {
+  fill: #60e5ae;
+}
+.menu--wrap li a.linkActive {
+  color: #60e5ae;
+}
+.menu--wrap li a.linkActive svg path {
+  stroke: #60e5ae;
+}
+.menu--wrap li.spin a.linkActive svg path {
+  fill: #60e5ae;
+}
+/* profile--dropdown  */
+.profile--dropdown {
+  box-shadow: 25px 23px 68px 0px rgba(10, 48, 61, 0.06);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease-in-out;
+}
+.profile--dropdown.show {
+  top: 60px;
+  opacity: 1;
+  visibility: visible;
+}
+.profile--dropdown li a,
+.profile--dropdown li .logout {
+  display: flex;
+  align-items: center;
+  padding: 8px 14px;
+  gap: 8px;
+  font-size: 16px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 18px;
+  transition: all 0.3s ease-in-out;
+}
+.profile--dropdown li a:hover,.profile--dropdown li a.linkActive {
+  background-color: rgb(96 229 174 / 40%);
+}
+.profile--dropdown li .logout {
+  color: #ff4c24;
+}
+
+/* main--content--wrapper  */
+.main--content--upper{
+  box-shadow: 0px 1px 3px 0px rgba(0, 0, 0, 0.12),
+  0px 23px 44px 0px rgba(176, 183, 195, 0.14);
+}
+.main--content--wrapper,
+.main--content--wrapperV2 {
+  /* height: calc(100vh - 280px); */
+  border-radius: 15px;
+  background-color: #fff;
+  padding: 27px;
+}
+.reset--icon {
+  background: linear-gradient(102deg, #05e389 3.72%, #009a62 80.82%);
+}
+.main--content--wrapperV2{
+  height: calc(100vh - 150px);
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  border-radius: 10px;
+  background-color: #e3e3e3;
+}
+ 
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background:#05e389; 
+  border-radius: 10px;
+}
+
+
+/* select--dropdown  */
+.select--dropdown{
+  opacity: 0;
+  visibility: hidden;
+  top: 64px;
+  transition: all 0.2s ease-in-out;
+}
+.select--dropdown.show{
+  top: 56px;
+  opacity: 1;
+  visibility: visible;
+}
+
+.tasklist--wrapper{
+  height: calc(100vh - 424px);
+}
