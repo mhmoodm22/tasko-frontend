@@ -4,7 +4,10 @@ import { Navigate } from "react-router-dom";
 import WebPreLoader from "../components/Loader/WebPreLoader";
 
 const PrivateRoute = ({ children }) => {
-  const { user, userLoading, userToken } = useAuthContext();
+  const { userLoading, userToken } = useAuthContext();
+
+  // passing the user to the protected route if user has token
+
   if (userLoading) {
     return <WebPreLoader />;
   }

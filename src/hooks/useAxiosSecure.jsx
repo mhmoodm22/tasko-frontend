@@ -2,7 +2,8 @@ import axios from "axios";
 
 const useAxiosSecure = () => {
   const axiosSecure = axios.create({
-    baseURL: "http://localhost:8080/task-ws/",
+    baseURL: "http://103.161.8.39:8080/task-ws",
+    
   });
 
   // request interceptor

@@ -15,14 +15,15 @@ const Login = () => {
 
   const axiosAuth = useAxiosAuth();
 
-  const [isNotMatch, setIsNotMatch, setUserToken] = useState(false);
+  const [isNotMatch, setIsNotMatch] = useState(false);
   const {
     register,
     handleSubmit,
     formState: { errors },
+    reset,
   } = useForm();
 
-  const { setUser, setUserLoading } = useAuthContext();
+  const { setUserLoading } = useAuthContext();
   const naviagte = useNavigate();
 
   const handlePasswordShow = () => {
@@ -46,20 +47,19 @@ const Login = () => {
     // submiting the user
     axiosAuth
       .post("/users", usersInfo)
-      .then((res) => {
-        if (res.status === 200) {
-          // setting the user
-          setUser(res.data);
-          setUserToken(res.data.userid);
-          setUserLoading(false);
-          toast.success("Sign Up Successfull");
+      .then(() => {
+        // setting the user loading false and redirecting for login
+        setUserLoading(false);
+        toast.success("Sign Up Successfull , Please Log In");
+        reset();
 
-          setTimeout(() => {
-            naviagte("/");
-          }, 1000);
-        }
+        setTimeout(() => {
+          naviagte("/login");
+        }, 1000);
       })
-      .catch(() => {
+      .catch((err) => {
+        console.log(err);
+
         setUserLoading(false);
         toast.error("Register Failed");
       });
@@ -222,7 +222,7 @@ const Login = () => {
               )}
               {isNotMatch && (
                 <p className="text-[14px] font-normal text-red-600 mt-[6px]">
-                  Password don't matched
+                  Password {`don't`} matched
                 </p>
               )}
             </div>

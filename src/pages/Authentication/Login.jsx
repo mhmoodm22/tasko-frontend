@@ -14,7 +14,7 @@ const Login = () => {
   const navigate = useNavigate();
   const axiosAuth = useAxiosAuth();
   const axiosSecure = useAxiosSecure();
-  const { setUser, setUserLoading } = useAuthContext();
+  const { setUser, setUserLoading, setUserToken } = useAuthContext();
   const {
     register,
     handleSubmit,
@@ -51,19 +51,26 @@ const Login = () => {
           .get(`/users?id=${userId}`)
           .then((res) => {
             toast.success("Logged in Successfully");
+
+            // setting the token and user data to state so that we can enter private route
+            setUserToken(res.data.userId);
             setUser(res.data);
 
             reset();
             navigate("/");
             setUserLoading(false);
           })
-          .catch((err) => console.log(err));
+          .catch((err) => {
+            console.log(err);
+
+            toast.error("Login Failed");
+          });
       })
       .catch((err) => {
-        if (err.response.status === 403) {
-          toast.error("Invalid Credentials");
+        if (err?.response?.status === 403) {
+          return toast.error("Invalid Credentials");
         } else {
-          toast.error("An error occured , Please Try again");
+          toast.error("An error occured,Please Try again");
           reset();
         }
       });

@@ -243,8 +243,12 @@ const Navbar = () => {
                 onClick={() => setIsDropdownActive(!isDropdownActive)}
               >
                 <img
-                  className="h-[40px] w-[40px] object-contain rounded-full"
-                  src={user?.img ? user.img : defaultProfile}
+                  className="h-[40px] w-[40px] object-cover rounded-full"
+                  src={
+                    user?.img
+                      ? `data:image/jpeg;base64,${user.img.underlyingStream.bytes}`
+                      : defaultProfile
+                  }
                   alt=""
                 />
                 <p className="text-[18px] text-white font-medium capitalize ml-[11px]">

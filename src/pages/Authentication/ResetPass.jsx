@@ -1,15 +1,19 @@
-import { Link } from "react-router-dom";
-import LoginImg from "../../assets/images/login.png";
 import AuthButton from "./components/AuthButton";
 import "./auth.css";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
 import BgImg from "../../assets/images/header-bg.png";
+import { useAxiosAuth } from "../../hooks/useAxiosAuth";
+import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
 
 const ResetPass = () => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
   const [isConfirmPasswordVisible, setIsConfirmPasswordVisible] =
     useState(false);
+
+  const axiosAuth = useAxiosAuth();
+  const navigate = useNavigate();
 
   const {
     register,
@@ -18,7 +22,25 @@ const ResetPass = () => {
   } = useForm();
 
   const onSubmit = (userData) => {
-    console.log(userData);
+    const email = userData.email;
+    const password = userData.password;
+
+    // changing the password
+    axiosAuth
+      .put(`/users/password-reset?email=${email}&password=${password}`)
+      .then((res) => {
+        console.log(res);
+
+        toast.success("Password Successfully Reset Done");
+
+        setTimeout(() => {
+          navigate("/login");
+        }, 1500);
+      })
+      .catch((err) => {
+        console.log(err);
+        toast.error("Password Reset Unsuccessfull ");
+      });
   };
   return (
     <section className="rest--pass--section">
@@ -192,7 +214,7 @@ const ResetPass = () => {
                     </p>
                   )}
                 </div>
-                <AuthButton>Log in</AuthButton>
+                <AuthButton>Reset Password</AuthButton>
               </form>
             </div>
           </div>
