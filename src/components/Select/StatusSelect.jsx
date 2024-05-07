@@ -1,15 +1,18 @@
 import { useEffect, useState, useRef } from "react";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 export default function StatusSelect() {
-  const StatusSelectDatas = [
-    { id: "all", title: "All Task" },
-    { id: "ongoing", title: "Ongoing" },
-    { id: "pending", title: "Pending" },
-    { id: "collaborative", title: "Collaborative Task" },
-    { id: "done", title: "Done" },
-  ];
+  const axiosSecure = useAxiosSecure();
 
-  const [statusData, setStatusData] = useState(StatusSelectDatas);
+  const { data: taskStatusList } = useQuery({
+    queryKey: ["taskStatusList"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/taskstatuslist");
+      return res.data;
+    },
+  });
+
   const [selectedStatus, setSelectedStatus] = useState("");
   const [isShow, setIsShow] = useState(false);
   const triggerRef = useRef(null);
@@ -41,7 +44,7 @@ export default function StatusSelect() {
         className={`select--toggler flex w-[220px] items-center justify-between py-[12px] px-[16px] border-[1px] border-[#e1e1e1] rounded-[8px] text-paraLight font-medium`}
         onClick={() => setIsShow(!isShow)}
       >
-        {selectedStatus === "" ? "Select Status" : selectedStatus.title}
+        {selectedStatus === "" ? "Select Status" : selectedStatus.statusTitle}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="18"
@@ -60,16 +63,17 @@ export default function StatusSelect() {
           isShow ? "show" : ""
         } absolute top-[56px] right-0 w-[220px] h-[205px] overflow-auto bg-white py-[6px] px-[14px] shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-[8px]`}
       >
-        {statusData.map((data) => (
-          <li
-            key={data.id}
-            className="form-group option"
-            onClick={() => handleSelect(data)}
-          >
-            <input type="radio" id={data.id} name="category--radio" />
-            <label htmlFor={data.id}>{data.title}</label>
-          </li>
-        ))}
+        {taskStatusList &&
+          taskStatusList.map((data) => (
+            <li
+              key={data.id}
+              className="form-group option"
+              onClick={() => handleSelect(data)}
+            >
+              <input type="radio" id={data.id} name="category--radio" />
+              <label htmlFor={data.id}>{data.statusTitle}</label>
+            </li>
+          ))}
       </ul>
     </div>
   );

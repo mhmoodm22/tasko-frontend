@@ -22,7 +22,7 @@ Button.propTypes = {
   actionFunc: PropTypes.func,
 };
 
-const DeletePopUp = ({ isActive, setIsActive }) => {
+const DeletePopUp = ({ isActive, setIsActive, setConfirm }) => {
   return (
     <div
       className={`fixed w-full h-screen top-0 left-0 flex items-center justify-center bg-[rgba(0,0,0,.4)] z-10 duration-300 ease-in-out ${
@@ -47,7 +47,7 @@ const DeletePopUp = ({ isActive, setIsActive }) => {
 
         {/* button wrapper */}
         <div className="flex items-center gap-5">
-          <div className="w-fit">
+          <div onClick={() => setConfirm(true)} className="w-fit">
             <Button bgColor={"#60E5AE"}>Yes</Button>
           </div>
           <div onClick={() => setIsActive(false)} className="w-fit">
@@ -67,6 +67,7 @@ const DeletePopUp = ({ isActive, setIsActive }) => {
 DeletePopUp.propTypes = {
   isActive: PropTypes.bool,
   setIsActive: PropTypes.func,
+  setConfirm: PropTypes.func,
 };
 
 export default DeletePopUp;

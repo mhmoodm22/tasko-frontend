@@ -14,6 +14,7 @@ import PrivateRoute from "./PrivateRoute";
 import AddTask from "../pages/AddTask/AddTask";
 import Settings from "../pages/Settings/Settings";
 import Notifications from "../pages/Notifications/Notifications";
+import Spin from "../pages/Spin/Spin";
 
 const router = createBrowserRouter([
   {
@@ -90,6 +91,14 @@ const router = createBrowserRouter([
         element: (
           <PrivateRoute>
             <Notifications />
+          </PrivateRoute>
+        ),
+      },
+      {
+        path: "/spin",
+        element: (
+          <PrivateRoute>
+            <Spin />
           </PrivateRoute>
         ),
       },

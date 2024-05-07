@@ -70,7 +70,7 @@ const Login = () => {
         if (err?.response?.status === 403) {
           return toast.error("Invalid Credentials");
         } else {
-          toast.error("An error occured,Please Try again");
+          toast.error("An error occured , Please Try again");
           reset();
         }
       });

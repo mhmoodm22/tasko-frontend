@@ -1,17 +1,21 @@
 import { useState, useEffect, useRef } from "react";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import { useQuery } from "@tanstack/react-query";
 
 export default function CategorySelect() {
-  const categoryDatas = [
-    { id: "arts", title: "Arts and Craft" },
-    { id: "nature", title: "Nature" },
-    { id: "family", title: "Family" },
-    { id: "sport", title: "Sport" },
-    { id: "friends", title: "Friends" },
-    { id: "meditation", title: "Meditation" },
-  ];
+  const axiosSecure = useAxiosSecure();
 
-  const [categoryData, setCategoryData] = useState(categoryDatas);
+  const { data, isLoading } = useQuery({
+    queryKey: ["all-category-list"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/category");
+
+      return res.data;
+    },
+  });
+
   const [selectedStatus, setSelectedStatus] = useState("");
+
   const [isShow, setIsShow] = useState(false);
   const triggerRef = useRef(null);
 
@@ -42,7 +46,9 @@ export default function CategorySelect() {
         className={`flex w-[305px] items-center justify-between py-[12px] px-[16px] border-[1px] border-[#e1e1e1] rounded-[8px] text-paraLight font-medium`}
         onClick={() => setIsShow(!isShow)}
       >
-        {selectedStatus === "" ? "Select Task Category" : selectedStatus.title}
+        {selectedStatus === ""
+          ? "Select Task Category"
+          : selectedStatus.catName}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="18"
@@ -61,16 +67,22 @@ export default function CategorySelect() {
           isShow ? "show" : ""
         } top-[56px] right-0 w-[220px] h-[260px] overflow-auto bg-white py-[6px] px-[14px] shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-[8px]`}
       >
-        {categoryData.map((data) => (
-          <li
-            key={data.id}
-            className="form-group option"
-            onClick={() => handleSelect(data)}
-          >
-            <input type="radio" id={data.id} name="category--radio" />
-            <label htmlFor={data.id}>{data.title}</label>
-          </li>
-        ))}
+        {isLoading ? (
+          <p>loading</p>
+        ) : data && data.length ? (
+          data.map((singleCat) => (
+            <li
+              key={singleCat.id}
+              className="form-group option"
+              onClick={() => handleSelect(singleCat)}
+            >
+              <input type="radio" id={singleCat.id} name="category--radio" />
+              <label htmlFor={singleCat.id}>{singleCat.catName}</label>
+            </li>
+          ))
+        ) : (
+          <div> No Category Available </div>
+        )}
       </ul>
     </div>
   );

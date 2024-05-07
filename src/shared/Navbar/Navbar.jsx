@@ -109,7 +109,7 @@ const Navbar = () => {
               </li>
               <li className="spin">
                 <NavLink
-                  to={"/demo"}
+                  to={"/spin"}
                   className={({ isActive }) => (isActive ? "linkActive" : "")}
                 >
                   <svg
@@ -194,8 +194,11 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-          <div className="flex items-center gap-[29px]">
-            <NavLink to={"/notifications"}>
+          <div className="flex items-center gap-[29px] profile--info--list">
+            <NavLink
+              to={"/notifications"}
+              className={({ isActive }) => (isActive ? "linkActive" : "")}
+            >
               <div className="relative flex items-center justify-center h-[40px] w-[40px] rounded-full bg-[#232b35]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
