@@ -50,7 +50,7 @@ const ResetPass = () => {
       ></div>
       <div>
         <div className="main--content--upper -mt-[60px] overflow-hidden w-[1320px] mx-auto rounded-[24px]">
-          <div className="main--content--wrapperV2 overflow-auto">
+          <div className="main--content--wrapperV2 p-7 bg-[#fff] overflow-auto">
             <div className="w-[607px] mx-auto py-[10px]">
               <div className="reset--icon mx-auto mb-[30px] h-[88px] w-[88px] rounded-[24px] flex items-center justify-center">
                 <svg

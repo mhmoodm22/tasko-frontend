@@ -15,6 +15,7 @@ import AddTask from "../pages/AddTask/AddTask";
 import Settings from "../pages/Settings/Settings";
 import Notifications from "../pages/Notifications/Notifications";
 import Spin from "../pages/Spin/Spin";
+import AuthRoute from "./AuthRoute";
 
 const router = createBrowserRouter([
   {
@@ -106,15 +107,27 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />,
+    element: (
+      <AuthRoute>
+        <Login />
+      </AuthRoute>
+    ),
   },
   {
     path: "/sign-up",
-    element: <SignUp />,
+    element: (
+      <AuthRoute>
+        <SignUp />
+      </AuthRoute>
+    ),
   },
   {
     path: "/reset-password",
-    element: <ResetPass />,
+    element: (
+      <AuthRoute>
+        <ResetPass />
+      </AuthRoute>
+    ),
   },
 ]);
 

@@ -47,18 +47,19 @@ const Navbar = () => {
         backgroundImage: `url(${HeaderBg})`,
       }}
       className={`${shortNav ? "h-[175px]" : ""} ${
-        tallNav ? "h-[306px]" : ""
+        tallNav ? " h-[200px] lg:h-[306px]" : ""
       } pt-[26px] pb-[30px] bg-cover bg-no-repeat`}
     >
       <div className="container">
-        <div className="flex items-center justify-between">
-          <div>
-            <Link to={"/"}>
-              <img src={Logo} alt="" />
+        <div className="flex items-center justify-between  2xl:flex-row">
+          <div className="w-[115px]">
+            <Link className="w-full block" to={"/"}>
+              <img className="w-full" src={Logo} alt="" />
             </Link>
           </div>
+          {/* nav links */}
           <div>
-            <ul className="menu--wrap flex items-center gap-[50px]">
+            <ul className="menu--wrap  items-center gap-[50px] hidden 2xl:flex 2xl:flex-row ">
               <li>
                 <NavLink
                   to={"/"}
@@ -194,12 +195,14 @@ const Navbar = () => {
               </li>
             </ul>
           </div>
-          <div className="flex items-center gap-[29px] profile--info--list">
+
+          {/* nav profile */}
+          <div className=" items-center gap-2 lg:gap-[29px] profile--info--list  flex">
             <NavLink
               to={"/notifications"}
               className={({ isActive }) => (isActive ? "linkActive" : "")}
             >
-              <div className="relative flex items-center justify-center h-[40px] w-[40px] rounded-full bg-[#232b35]">
+              <div className="relative flex items-center justify-center h-8 w-8 lg:h-[40px] lg:w-[40px] rounded-full bg-[#232b35]">
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   width="20"
@@ -225,16 +228,16 @@ const Navbar = () => {
                     strokeMiterlimit="10"
                   />
                 </svg>
-                <p className="absolute top-[12px] right-[12px] h-[6px] w-[6px] bg-[#ED0006] rounded-full outline-[3px]"></p>
+                <p className="absolute top-2 right-2 lg:top-[12px] lg:right-[12px] h-[6px] w-[6px] bg-[#ED0006] rounded-full outline-[3px]"></p>
               </div>
             </NavLink>
-            <div className="flex gap-[8px] items-center py-[7px] px-[10px] bg-[#353750] rounded-[114px]">
+            <div className="gap-[8px] items-center py-[7px] px-[10px] bg-[#353750] rounded-[114px] hidden lg:flex">
               <img
                 className="w-[24px] h-[20px] object-cover"
                 src={TalentedBadge}
                 alt=""
               />
-              <p className="text-[16px] text-[#fff] font-normal capitalize">
+              <p className="text-[16px] text-[#fff] font-normal capitalize ">
                 Level 2
               </p>
             </div>
@@ -246,7 +249,7 @@ const Navbar = () => {
                 onClick={() => setIsDropdownActive(!isDropdownActive)}
               >
                 <img
-                  className="h-[40px] w-[40px] object-cover rounded-full"
+                  className=" h-8 w-8 lg:h-[40px] lg:w-[40px] object-cover rounded-full"
                   src={
                     user?.img
                       ? `data:image/jpeg;base64,${user.img.underlyingStream.bytes}`
@@ -276,9 +279,9 @@ const Navbar = () => {
               </div>
               {/* profile dropdown */}
               <ul
-                className={`profile--dropdown w-[168px] absolute top-[80px] ${
+                className={`profile--dropdown w-[168px] absolute top-[80px]  ${
                   isDropdownActive ? "show" : ""
-                } left-0 py-[6px] bg-white rounded-[8px]`}
+                } right-0 py-[6px] bg-white rounded-[8px]`}
               >
                 <li>
                   <NavLink
@@ -356,11 +359,11 @@ const Navbar = () => {
           </div>
         </div>
         {pathname === "/" ? (
-          <div className="pt-[42px]">
-            <p className="text-[24px] font-semibold text-primaryColor mb-[4px]">
-              Hi {user?.userName ? user.userName : "Person"}
+          <div className=" pt-7 lg:pt-[42px]">
+            <p className=" text-xl lg:text-[24px] font-semibold text-primaryColor mb-[4px]">
+              Hi , {user?.userName ? user.userName : "Person"}
             </p>
-            <h1 className="text-[40px] font-semibold text-white">
+            <h1 className=" text-[28px]  lg:text-[40px] font-semibold text-white">
               Welcome to Dashboard
             </h1>
           </div>

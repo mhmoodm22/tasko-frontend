@@ -10,7 +10,7 @@ const Error = () => {
         style={{ backgroundImage: `url(${BgImg})` }}
       ></div>
       <div className="main--content--upper w-[1320px] overflow-hidden mx-auto -mt-[60px] rounded-[24px]">
-        <div className="main--content--wrapperV2 overflow-auto">
+        <div className="main--content--wrapperV2 bg-[#fff] p-7 overflow-auto">
           <div className="w-[580px] mx-auto py-[24px]">
             <img
               className="w-full h-[520px] object-cover"

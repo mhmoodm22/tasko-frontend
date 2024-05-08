@@ -44,6 +44,7 @@ const AuthProvider = ({ children }) => {
   const logOut = () => {
     localStorage.removeItem("authToken");
     localStorage.removeItem("userId");
+    setUserToken(null);
     setUser(null);
     setUserLoading(false);
 

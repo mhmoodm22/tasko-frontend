@@ -34,7 +34,7 @@ function TaskList() {
         <div>
           {taskList?.length > 0 ? (
             // Use cached taskList if available
-            <div className="grid grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 2xl:grid-cols-3 gap-3 lg:gap-6">
               {data.map((singleTask, index) => (
                 <Task taskInfo={singleTask} key={index} />
               ))}

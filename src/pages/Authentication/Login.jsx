@@ -62,14 +62,16 @@ const Login = () => {
           })
           .catch((err) => {
             console.log(err);
-
             toast.error("Login Failed");
+            setUserLoading(false);
           });
       })
       .catch((err) => {
         if (err?.response?.status === 403) {
+          setUserLoading(false);
           return toast.error("Invalid Credentials");
         } else {
+          setUserLoading(false);
           toast.error("An error occured , Please Try again");
           reset();
         }

@@ -11,6 +11,7 @@
 body {
   font-family: "Poppins", sans-serif;
   background-color: #fafafa;
+  overflow-x: hidden;
 }
 
 .form-group input {
@@ -166,10 +167,7 @@ body {
 }
 .main--content--wrapper,
 .main--content--wrapperV2 {
-  /* height: calc(100vh - 280px); */
   border-radius: 15px;
-  background-color: #fff;
-  padding: 27px;
 }
 .reset--icon {
   background: linear-gradient(102deg, #05e389 3.72%, #009a62 80.82%);
@@ -201,6 +199,7 @@ body {
   visibility: hidden;
   top: 64px;
   transition: all 0.2s ease-in-out;
+  z-index: 50;
 }
 .select--dropdown.show {
   top: 56px;

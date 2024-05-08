@@ -20,7 +20,7 @@ const Task = ({ taskInfo }) => {
   return (
     <div>
       <Link to={`/task/${taskInfo.id}`}>
-        <div className="rounded-lg bg-[#fff] h-full shadow-[0px_1px_3px_0px_rgba(0,0,0,0.12)] p-5 border-[1px] border-solid border-[#E1E1E1]">
+        <div className="rounded-lg bg-[#fff] h-full shadow-[0px_1px_3px_0px_rgba(0,0,0,0.12)] p-3 lg:p-5 border-[1px] border-solid border-[#E1E1E1]">
           {/* top part */}
           <div className="flex items-start gap-3 w-full">
             {/* icon */}
@@ -36,20 +36,20 @@ const Task = ({ taskInfo }) => {
             <div className="w-full">
               {/* title part */}
               <div className="flex items-center justify-between w-full">
-                <h3 className="text-headingColor text-2xl font-semibold">
+                <h3 className="text-headingColor text-xl lg:text-2xl font-semibold">
                   {taskInfo.title}
                 </h3>
               </div>
 
               {/* description */}
-              <p className="pt-1.5 text-base text-paraLight ">
+              <p className="pt-1.5 text-sm lg:text-base text-paraLight ">
                 {taskInfo.description.split("").slice(0, 80)}
               </p>
             </div>
           </div>
 
           {/* date & status */}
-          <div className="flex items-center w-full justify-between pt-7">
+          <div className="flex items-center w-full justify-between gap-2 lg:gap-0 pt-7">
             {/* date */}
             <div className="flex items-center gap-3">
               {/* icon */}

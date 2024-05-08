@@ -2,6 +2,7 @@ import { SpinWheel } from "spin-wheel-game";
 import SectionHeading from "../../components/SectionHeading/SectionHeading";
 import "./Spin.css";
 import { useState } from "react";
+import CategorySelect from "../../components/Select/CategorySelect";
 
 const Spin = () => {
   const segments = [
@@ -14,6 +15,8 @@ const Spin = () => {
     // Add more segments as needed
   ];
 
+  const [spinItems, setSpinItems] = useState(segments);
+
   const [showInstruction, setShowInstruction] = useState(true);
   const [selectedResult, setSelectedResult] = useState(null);
 
@@ -25,7 +28,6 @@ const Spin = () => {
   };
 
   const spinWheelProps = {
-    segments,
     onFinished: handleSpinFinish,
     primaryColor: "black",
     contrastColor: "#fff",
@@ -42,13 +44,27 @@ const Spin = () => {
   return (
     <div>
       {/* top part */}
-      <div>
+      <div className="flex items-center justify-between">
         <SectionHeading>Spin Wheel</SectionHeading>
+
+        {/* task category selection */}
+        <div>
+          <p className="text-headingColor text-base font-semibold leading-5 pb-3 ">
+            Select Task Category
+          </p>
+          <div className="w-[305px]">
+            <CategorySelect />
+          </div>
+        </div>
       </div>
 
       {/* spinner */}
       <div className="w-[500px] mx-auto">
-        <SpinWheel {...spinWheelProps} />
+        <SpinWheel
+          key={spinItems.length}
+          {...spinWheelProps}
+          segments={spinItems}
+        />
       </div>
 
       {/* selected text */}
