@@ -62,15 +62,15 @@ const Settings = () => {
       </div>
 
       {/* main content */}
-      <div className="pt-8 flex-grow">
+      <div className=" pt-4 lg:pt-8 flex-grow">
         {/* header */}
-        <h3 className="text-[20px] font-semibold text-headingColor leading-6 pb-6 ">
+        <h3 className=" text-[18px] lg:text-[20px] font-semibold text-headingColor leading-6 pb-4 lg:pb-6 ">
           Existing Task Category
         </h3>
 
         {/* task wrapper */}
 
-        <div className="px-[10px] py-[14px] rounded-lg border border-solid border-[#E1E1E1] flex flex-col gap-[10px] h-[375px] max-h-[375px] overflow-y-auto task--wrapper">
+        <div className="px-[10px] py-[14px] rounded-lg border border-solid border-[#E1E1E1] flex flex-col gap-2 lg:gap-[10px] h-[300px]  lg:h-[375px] max-h-[375px] overflow-y-auto task--wrapper">
           {isLoading ? (
             <Loader />
           ) : (
@@ -78,9 +78,9 @@ const Settings = () => {
             categoryList.map((singleCategory, index) => (
               <div
                 key={index}
-                className="flex items-center justify-between px-[10px] py-3"
+                className="flex items-center justify-between px-1.5 lg:px-[10px] py-2 lg:py-3"
               >
-                <p className="text-[18px] leading-4 text-[#667085] ">
+                <p className=" text-base lg:text-[18px] leading-4 text-[#667085] ">
                   {singleCategory.catName}
                 </p>
 
@@ -142,7 +142,10 @@ const Settings = () => {
 
       {/* add category area */}
 
-      <div onClick={() => setIsPopUpActive(true)} className="w-[270px] ml-auto">
+      <div
+        onClick={() => setIsPopUpActive(true)}
+        className=" w-full lg:w-[270px] ml-auto"
+      >
         <CommonButton text={"Add New Category"} />
       </div>
 

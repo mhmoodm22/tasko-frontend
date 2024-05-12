@@ -8,6 +8,12 @@ import ArrowRight from "../../assets/images/arrow-right.svg";
 
 import "./AddTask.css";
 import { useForm } from "react-hook-form";
+import moment from "moment";
+import useAuthContext from "../../hooks/useAuthContext";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
+import CongratsPopUp from "../../components/PopUp/CongratsPopUp";
 
 const CalendarPrevNextIcon = () => {
   return (
@@ -32,19 +38,15 @@ const CalendarPrevNextIcon = () => {
 };
 
 const AddTask = () => {
+  const axiosSecure = useAxiosSecure();
+
+  const [isCongratsActive, setIsCongratsActive] = useState(false);
+
   const smallTextStyle =
     "text-base text-headingColor leading-5 font-semibold pb-3";
   const commonInputStyle =
     "px-[22px] py-3 rounded border border-solid border-[#E1E1E1] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.12)] placeholder:text-[#667085] text-base text-headingColor focus:outline-none w-full";
 
-  const option = [
-    { value: "Arts and Craft", label: "Arts and Craft" },
-    { value: "Nature", label: "Nature" },
-    { value: "Family", label: "Family" },
-    { value: "Sport", label: "Sport" },
-    { value: "Friends", label: "Friends" },
-    { value: "Meditation", label: "Meditation" },
-  ];
   const collabs = [
     {
       name: "ben",
@@ -68,17 +70,30 @@ const AddTask = () => {
     },
   ];
 
-  const [taskCategoryOptions, setTaskCategoryOptions] = useState(option);
+  // fetching task category
+  const { data: taskCats } = useQuery({
+    queryKey: ["taskCats"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/category");
+
+      return res.data;
+    },
+  });
+
+  // eslint-disable-next-line
   const [assignTaskOptions, setAssignTaskOptions] = useState(collabs);
 
   const [isTaskCatActive, setIsTaskCatActive] = useState(false);
   const [isAssignTaskActive, setIsAssignTaskActive] = useState(false);
 
   const [taskCatSelected, setTaskCatSelected] = useState("");
+  // eslint-disable-next-line
   const [taskAssignSelected, setTaskAssignSelected] = useState("");
 
   const taskCatInput = document.querySelector(".add--task--input");
   const taskAssignInput = document.querySelector(".assign--task--input");
+
+  const { user } = useAuthContext();
 
   //  closing the dropdown functionality
   // for task category
@@ -110,6 +125,7 @@ const AddTask = () => {
     handleSubmit,
     formState: { errors, touchedFields },
     setValue,
+    reset,
   } = useForm();
 
   //handle the category select
@@ -122,12 +138,37 @@ const AddTask = () => {
   };
 
   const onSubmit = (data) => {
+    const formattedDate = moment(dateValue).format("YYYY-MM-DD");
+    // const raw = moment("2024-05-17").format("dddd, MMMM D-YYYY");
+
+    // console.log(raw);
+
     const taskInfo = {
-      ...data,
-      date: dateValue,
+      category: data.category,
+      date: formattedDate,
+      description: data.description,
+      title: data.title,
+      userId: user.userId,
     };
 
     console.log(taskInfo);
+
+    // adding task to the database
+    axiosSecure
+      .post("/tasks", taskInfo)
+      .then((res) => {
+        console.log(res);
+        if (res.status === 200) {
+          reset();
+          setTaskCatSelected(null);
+          handleCategorySelect(null);
+          setDateValue(new Date());
+          setIsCongratsActive(true);
+        }
+      })
+      .catch((err) => {
+        toast.error(err.message);
+      });
   };
 
   return (
@@ -194,27 +235,28 @@ const AddTask = () => {
 
                 {/* lists */}
                 <ul
-                  className={`absolute bg-[#fff] top-[80px]  right-0 px-[14px] py-[6px] z-10 shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-lg duration-300 ease-in-out ${
+                  className={`absolute bg-[#fff] top-[80px]  right-0 px-[14px] py-[6px] z-10 shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-lg duration-300 ease-in-out max-h-[220px] overflow-y-auto ${
                     isTaskCatActive
                       ? "opacity-100 visible top-[60px]"
                       : "opacity-0 invisible top-[80px]"
                   } `}
                 >
-                  {taskCategoryOptions.length > 0 &&
-                    taskCategoryOptions.map((item, index) => (
+                  {taskCats &&
+                    taskCats.length > 0 &&
+                    taskCats.map((item, index) => (
                       <li
                         className={`px-3 py-2 cursor-pointer flex items-center gap-2 rounded ${
-                          taskCatSelected === item.value ? "bg-[#E7FBF3]" : ""
+                          taskCatSelected === item.catName ? "bg-[#E7FBF3]" : ""
                         }`}
                         key={index}
                         onClick={() => {
-                          setTaskCatSelected(item.value);
-                          handleCategorySelect(item.value);
+                          setTaskCatSelected(item.catName);
+                          handleCategorySelect(item.catName);
                           setIsTaskCatActive(false);
                         }}
                       >
                         {" "}
-                        {taskCatSelected === item.value ? (
+                        {taskCatSelected === item.catName ? (
                           <span className="w-[15px] h-[15px] border border-solid rounded border-primaryColor bg-primaryColor relative">
                             <span className="absolute  top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
                               <svg
@@ -238,10 +280,10 @@ const AddTask = () => {
                             </span>
                           </span>
                         ) : (
-                          <span className="w-[15px] h-[15px] border border-solid rounded border-[#7a8680] "></span>
+                          <span className="w-[15px] h-[15px] border border-solid rounded border-[#7a8680]"></span>
                         )}
                         <p className="text-[rgba(6,17,10,0.50)] text-sm leading-5">
-                          {item.value}
+                          {item.catName}
                         </p>{" "}
                       </li>
                     ))}
@@ -339,6 +381,15 @@ const AddTask = () => {
         <div className="w-[270px]">
           <CommonButton text={"Add New Task"} smallIcon={ArrowRight} />
         </div>
+
+        {/* success pop up */}
+        <CongratsPopUp
+          isActive={isCongratsActive}
+          setIsActive={setIsCongratsActive}
+          mainText={"Successfully created new Task!"}
+          subtext={"Your Task can be use it now Task list. Try it now"}
+          hasButton={true}
+        />
       </form>
     </section>
   );

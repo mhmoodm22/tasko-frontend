@@ -2,11 +2,28 @@ import PropTypes from "prop-types";
 import { useEffect, useState, useRef } from "react";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import { useQuery } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 
-export default function StatusSelect({ setSelectedValue }) {
+export default function StatusSelect({
+  selectedStatus,
+  setSelectedValue,
+  disableFunc,
+}) {
   const axiosSecure = useAxiosSecure();
+  const location = useLocation();
+  const [shortStatus, setShortStatus] = useState(false);
 
-  const { data: taskStatusList } = useQuery({
+  useEffect(() => {
+    if (location.pathname.includes("/task")) {
+      setShortStatus(true);
+    }
+
+    // eslint-disable-next-line
+  }, [shortStatus]);
+
+  const [taskStatusList, setTaskStatusList] = useState();
+
+  const { data: taskFetchList } = useQuery({
     queryKey: ["taskStatusList"],
     queryFn: async () => {
       const res = await axiosSecure.get("/taskstatuslist");
@@ -14,15 +31,21 @@ export default function StatusSelect({ setSelectedValue }) {
     },
   });
 
-  const [selectedStatus, setSelectedStatus] = useState("");
+  useEffect(() => {
+    setTaskStatusList(taskFetchList);
+  }, [taskFetchList]);
+
   const [isShow, setIsShow] = useState(false);
   const triggerRef = useRef(null);
 
   const handleSelect = (data) => {
-    setSelectedStatus(data);
-
     // passing the selected value to outer components
     setSelectedValue(data);
+
+    // disabling the other funciton
+    if (disableFunc) {
+      disableFunc(null);
+    }
     setIsShow(false);
   };
 
@@ -48,7 +71,7 @@ export default function StatusSelect({ setSelectedValue }) {
         className={`select--toggler flex w-full items-center justify-between py-2.5 px-3  lg:py-[12px] lg:px-[16px] border-[1px] border-[#e1e1e1] rounded-[8px] text-paraLight font-medium text-sm lg:text-base`}
         onClick={() => setIsShow(!isShow)}
       >
-        {selectedStatus === "" ? "Select Status" : selectedStatus.statusTitle}
+        {!selectedStatus ? "Select Status" : selectedStatus.statusTitle}
         <svg
           xmlns="http://www.w3.org/2000/svg"
           width="18"
@@ -65,19 +88,35 @@ export default function StatusSelect({ setSelectedValue }) {
       <ul
         className={`select--dropdown ${
           isShow ? "show" : ""
-        } absolute top-[56px] right-0 w-[220px] h-[205px] overflow-auto bg-white py-[6px] px-[14px] shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-[8px]`}
+        } absolute top-[56px] right-0 w-[220px] ${
+          shortStatus ? "h-fit" : "h-[205px]"
+        } overflow-auto bg-white py-[6px] px-[14px] shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-[8px]`}
       >
         {taskStatusList &&
-          taskStatusList.map((data) => (
-            <li
-              key={data.id}
-              className="form-group option"
-              onClick={() => handleSelect(data)}
-            >
-              <input type="radio" id={data.id} name="category--radio" />
-              <label htmlFor={data.id}>{data.statusTitle}</label>
-            </li>
-          ))}
+          (shortStatus
+            ? taskStatusList
+                .filter((item) => ![1, 4].includes(item.id))
+                .map((data) => (
+                  <li
+                    key={data.id}
+                    className="form-group option"
+                    onClick={() => handleSelect(data)}
+                  >
+                    <input type="radio" id={data.id} name="category--radio" />
+
+                    <label htmlFor={data.id}>{data.statusTitle}</label>
+                  </li>
+                ))
+            : taskStatusList.map((data) => (
+                <li
+                  key={data.id}
+                  className="form-group option"
+                  onClick={() => handleSelect(data)}
+                >
+                  <input type="radio" id={data.id} name="category--radio" />
+                  <label htmlFor={data.id}>{data.statusTitle}</label>
+                </li>
+              )))}
       </ul>
     </div>
   );
@@ -85,4 +124,7 @@ export default function StatusSelect({ setSelectedValue }) {
 
 StatusSelect.propTypes = {
   setSelectedValue: PropTypes.func,
+  singleTaskStatus: PropTypes.bool,
+  disableFunc: PropTypes.func,
+  selectedStatus: PropTypes.object,
 };

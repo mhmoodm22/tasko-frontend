@@ -10,7 +10,7 @@ export default function CommonButton({
         backgroundColor: bGcolor,
         color: color,
       }}
-      className={`flex items-center py-[9px] justify-center px-[32px] block rounded-[8px] font-semibold capitalize leading-[27px]`}
+      className={`flex items-center py-[9px] justify-center px-[32px]  rounded-[8px] font-semibold capitalize leading-[27px]`}
     >
       {text}
     </button>

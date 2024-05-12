@@ -13,6 +13,8 @@ const AuthProvider = ({ children }) => {
   const [userLoading, setUserLoading] = useState(true);
   const axiosSecure = useAxiosSecure();
 
+  const [customUserRefetch, setCustomUserRefetch] = useState(false);
+
   //   chekcing if the user is logged in actually
   useEffect(() => {
     const getUser = () => {
@@ -24,7 +26,9 @@ const AuthProvider = ({ children }) => {
             setUserLoading(false);
           })
           .catch((err) => {
-            console.log(err);
+            if (err.response.status === 403) {
+              logOut();
+            }
             setUserLoading(false);
           })
           .finally(() => {
@@ -38,7 +42,7 @@ const AuthProvider = ({ children }) => {
     getUser();
 
     // eslint-disable-next-line
-  }, []);
+  }, [customUserRefetch]);
 
   //   log out function
   const logOut = () => {
@@ -59,6 +63,7 @@ const AuthProvider = ({ children }) => {
     logOut,
     userToken,
     setUserToken,
+    setCustomUserRefetch
   };
 
   return <AuthContext.Provider value={data}>{children}</AuthContext.Provider>;

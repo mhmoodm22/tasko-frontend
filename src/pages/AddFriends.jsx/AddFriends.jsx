@@ -1,9 +1,29 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import SectionHeading from "../../components/SectionHeading/SectionHeading";
 import FriendCard from "./Components/FriendCard";
 import BackButton from "../../components/BackButton.jsx/BackButton";
+import useAuthContext from "../../hooks/useAuthContext";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../hooks/useAxiosSecure";
+import NoContent from "../../components/NoContent/NoContent";
+import Loader from "../../components/Loader/Loader";
 
 export default function AddFriends() {
+  const axiosSecure = useAxiosSecure();
+
+  const { user } = useAuthContext();
+
+  const { data, isLoading } = useQuery({
+    queryKey: ["allFriendsList"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/friend/suggestion?id=${user.userId}`);
+
+      return res.data;
+    },
+  });
+
+  console.log(data);
+
   const newFriendsData = [
     {
       id: 1,
@@ -88,19 +108,33 @@ export default function AddFriends() {
   ];
   const [newFriendsInfo, setNewFriendsInfo] = useState(newFriendsData);
 
+  const [allFriends, setAllFriends] = useState(null);
 
   return (
-    <section>
+    <section className="h-full">
       <div className="flex items-center justify-between mb-[35px]">
         <SectionHeading>Add New Friends</SectionHeading>
         <BackButton />
       </div>
       {/* new friends  */}
-      <div className="grid grid-cols-4 gap-[30px] max-h-[calc(100vh-270px)] overflow-auto pb-[25px] pr-[10px]">
-        {newFriendsInfo.map((singleInfo) => (
-          <FriendCard singleInfo={singleInfo} key={singleInfo.id} newFriendsInfo={newFriendsInfo} />
-        ))}
-      </div>
+
+      {isLoading ? (
+        <div className="h-[50vh]">
+          <Loader />
+        </div>
+      ) : data && data.length > 0 ? (
+        <div className="grid grid-cols-4 gap-[30px] max-h-[calc(100vh-270px)] overflow-auto pb-[25px] pr-[10px]">
+          {data.map((singleInfo) => (
+            <FriendCard
+              singleInfo={singleInfo}
+              key={singleInfo.friendId}
+              newFriendsInfo={newFriendsInfo}
+            />
+          ))}
+        </div>
+      ) : (
+        <NoContent text="No Friends suggestion Available " />
+      )}
     </section>
   );
 }

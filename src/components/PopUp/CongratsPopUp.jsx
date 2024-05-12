@@ -1,7 +1,18 @@
 import PropTypes from "prop-types";
 import PopUp from "../../assets/images/complete-task-popup.svg";
+import CommonButton from "../CommonButton/CommonButton";
+import eyeIcon from "../../assets/images/eye-icon.svg";
+import { useNavigate } from "react-router-dom";
 
-const CongratsPopUp = ({ isActive, setIsActive, mainText }) => {
+const CongratsPopUp = ({
+  isActive,
+  setIsActive,
+  mainText,
+  subtext,
+  hasButton = false,
+}) => {
+  const navigate = useNavigate();
+
   return (
     <section
       className={`fixed left-0 top-0 w-full h-screen flex items-center justify-center bg-[rgba(0,0,0,.4)] duration-300 ease-in-out ${
@@ -20,10 +31,13 @@ const CongratsPopUp = ({ isActive, setIsActive, mainText }) => {
             {mainText}
           </h3>
 
-          <p className="text-[#737791] text-base leading-7 ">
-            Congratulations! you have successfully completed the task and you
-            got 20 points.
-          </p>
+          <p className="text-[#737791] text-base leading-7 ">{subtext}</p>
+
+          {hasButton && (
+            <div onClick={() => navigate("/")} className="w-[180px] mx-auto">
+              <CommonButton icon={eyeIcon} text={"View My Task"} />
+            </div>
+          )}
         </div>
 
         {/* close button */}
@@ -63,6 +77,8 @@ CongratsPopUp.propTypes = {
   isActive: PropTypes.bool,
   setIsActive: PropTypes.func,
   mainText: PropTypes.string,
+  subtext: PropTypes.string,
+  hasButton: PropTypes.bool,
 };
 
 export default CongratsPopUp;

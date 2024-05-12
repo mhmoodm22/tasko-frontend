@@ -20,8 +20,6 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 const Profile = () => {
   let commonBorderStyle =
     "mt-4 border border-solid border-[#E1E1E1] rounded-md";
-  const maxProgress = 100;
-  const currentProgress = 75;
 
   const progressStyles = {
     pathColor: `#01a266`,
@@ -129,23 +127,23 @@ const Profile = () => {
   };
 
   return (
-    <section>
+    <section className=" h-full overflow-y-auto overscroll-x-overflow-hidden no--scrollbar">
       {/* main area wrapper */}
-      <div className="flex items-start gap-[30px] ">
+      <div className="flex items-start gap-[30px] flex-col lg:flex-row">
         {/* profile area */}
-        <div className="w-[65%]">
+        <div className=" w-full lg:w-[65%]">
           <SectionHeading>Profile</SectionHeading>
 
           {/* inner wrapper area */}
           <div className={`flex flex-col ${commonBorderStyle}`}>
             {/* profile avatar area */}
-            <div className="flex flex-col items-center justify-center  py-[45px]  ">
+            <div className="flex flex-col items-center justify-center py-7 lg:py-[45px]  ">
               {/* profile image */}
-              <div className="w-[200px] h-[200px] relative ">
+              <div className=" w-[150px] h-[150px] lg:w-[200px] lg:h-[200px] relative ">
                 {user.img ? (
                   <img
                     className="w-full h-full object-cover rounded-full border-4 border-primaryColor shadow-lg"
-                    src={`data:image/jpeg;base64,${user.img.underlyingStream.bytes}`}
+                    src={`data:image/jpeg;base64,${user.img}`}
                   />
                 ) : (
                   <img
@@ -158,7 +156,7 @@ const Profile = () => {
                 {/* edit icon */}
                 <div
                   onClick={() => setIsPopUpActive(true)}
-                  className="w-[52px] h-[52px] absolute right-0 bottom-0 cursor-pointer overflow-hidden"
+                  className=" w-[32px] h-[32px]   lg:w-[52px] lg:h-[52px] absolute right-0 bottom-0 cursor-pointer overflow-hidden"
                 >
                   <img className="w-full h-full" src={editIcon} />
                 </div>
@@ -167,7 +165,7 @@ const Profile = () => {
               {/* profile info */}
               <div className="pt-4 text-center">
                 {/* profile name */}
-                <h3 className="text-[31px] font-semibold text-headingColor leading-[40px]">
+                <h3 className=" text-2xl leading-7 lg:text-[31px] font-semibold text-headingColor lg:leading-[40px]">
                   {user.userName && user.userName}
                 </h3>
                 {/* email */}
@@ -179,21 +177,21 @@ const Profile = () => {
             </div>
 
             {/* badges area */}
-            <div className="p-9 border-t border-solid border-[#E1E1E1] ">
+            <div className=" p-4 lg:p-9 border-t border-solid border-[#E1E1E1] ">
               <h3 className="text-base text-headingColor leading-5 font-semibold ">
                 Badges
               </h3>
 
               {/* badges holder */}
 
-              <div className="flex items-center gap-6 pt-5">
+              <div className="flex items-center gap-6 pt-5 flex-wrap lg:flex-nowrap justify-center ">
                 {badgeList.map((item, index) => (
                   <div key={index} className="w-fit">
                     <div
                       style={{
                         backgroundColor: item.bgColor,
                       }}
-                      className="w-[82px] h-[82px] rounded-full flex items-center justify-center"
+                      className=" w-[52px] h-[52px] lg:w-[82px]   lg:h-[82px] rounded-full flex items-center justify-center"
                     >
                       <img
                         className="w-10 h-10 object-contain"
@@ -220,28 +218,28 @@ const Profile = () => {
         </div>
 
         {/* progress area */}
-        <div className="w-[35%]">
+        <div className=" w-full lg:w-[35%]">
           <SectionHeading>Progress</SectionHeading>
           {/* level wrapper area */}
-          <div className={`${commonBorderStyle} p-9`}>
+          <div className={`${commonBorderStyle} p-4 lg:p-9`}>
             <h3 className="text-base text-headingColor leading-5 font-semibold">
               Level
             </h3>
 
             {/* level circle progess */}
             <div className="flex flex-col items-center">
-              <div className="w-[195px] h-[195px] flex items-center justify-center">
+              <div className=" w-[140px] h-[140px] lg:w-[195px] lg:h-[195px] flex items-center justify-center">
                 <CircularProgressbarWithChildren
-                  value={currentProgress}
+                  value={100 - user?.nextLabelPoint}
                   maxValue={100}
                   className="mx-auto"
                   strokeWidth={10}
                   styles={buildStyles(progressStyles)}
                 >
                   <div className="flex flex-col justify-center items-center">
-                    <p className="text-[37px] font-semibold text-headingColor leading-[50px]">
+                    <p className=" text-2xl leading-8 lg:text-[37px] font-semibold text-headingColor lg:leading-[50px]">
                       {" "}
-                      {currentProgress}{" "}
+                      {user?.currentPoint}{" "}
                     </p>
                     <p className="text-[10px] text-headingColor font-medium">
                       Earn Point
@@ -252,19 +250,18 @@ const Profile = () => {
 
               {/* level text */}
               <div className="text-center">
-                <h3 className="text-[34px] font-semibold leading-10 text-[#FFAB00] pt-[10px]">
-                  Level 2
+                <h3 className=" text-2xl leading-5 lg:text-[34px] font-semibold  pb-2 pt-3 lg:leading-10 text-[#FFAB00] lg:pt-[10px]">
+                  {user?.currentLabel}
                 </h3>
                 <p className="text-[#5A5C5F] text-sm font-medium pt-1">
-                  You Need {maxProgress - currentProgress} Point to go to Next
-                  Level
+                  You Need {user?.nextLabelPoint} Point to go to Next Level
                 </p>
               </div>
             </div>
           </div>
 
           {/* complete task text area */}
-          <div className="flex flex-col items-center py-6 bg-[#F4F2FC] rounded-md mt-5">
+          <div className="flex flex-col items-center py-6 bg-[#F4F2FC] rounded-md mt-5 text-center px-2 lg:px-0">
             {/* icon */}
             <div className="w-[217px] h-[112px]">
               <img
@@ -285,13 +282,13 @@ const Profile = () => {
 
       {/* edit profile pop up */}
       <div
-        className={`fixed top-0 left-0 z-50 w-full h-screen bg-[rgba(0,0,0,0.4)] flex items-center justify-center duration-300 ease-in-out ${
+        className={`fixed top-0 left-0 z-50 w-full h-screen bg-[rgba(0,0,0,0.4)] flex items-center justify-center duration-300 ease-in-out px-2.5 lg:px-0 ${
           isPopUpActive ? "" : "opacity-0 invisible"
         }  `}
       >
         {/* content */}
-        <div className="bg-[#fff] w-[500px] p-8 rounded-2xl relative ">
-          <h3 className="text-headingColor text-2xl leading-8 font-semibold pb-6 ">
+        <div className="bg-[#fff] w-full lg:w-[500px] p-5 lg:p-8 rounded-2xl relative ">
+          <h3 className="text-headingColor text-xl lg:text-2xl leading-8 font-semibold pb-6 ">
             Edit Profile
           </h3>
 
@@ -367,7 +364,7 @@ const Profile = () => {
             {/* close button */}
             <div
               onClick={() => setIsPopUpActive(false)}
-              className="w-3 h-3 absolute top-10 right-5 cursor-pointer"
+              className="w-3 h-3 absolute top-6  lg:top-10  right-5 cursor-pointer"
             >
               <svg
                 xmlns="http://www.w3.org/2000/svg"

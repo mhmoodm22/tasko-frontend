@@ -2,6 +2,7 @@ import PropTypes from "prop-types";
 
 import taskIcon from "../../../assets/images/task-icon.svg";
 import { Link } from "react-router-dom";
+import moment from "moment";
 
 const Task = ({ taskInfo }) => {
   const pending = "#E343E6";
@@ -9,17 +10,17 @@ const Task = ({ taskInfo }) => {
   const done = "#21D789";
 
   const currentColor =
-    taskInfo.status === "pending"
+    taskInfo.status.toLowerCase() === "pending"
       ? pending
-      : taskInfo.status === "progress"
+      : taskInfo.status.toLowerCase() === "ongoing"
       ? progress
-      : taskInfo.status === "done"
+      : taskInfo.status.toLowerCase() === "done"
       ? done
       : "";
 
   return (
     <div>
-      <Link to={`/task/${taskInfo.id}`}>
+      <Link to={`/task/${taskInfo.taskId}`}>
         <div className="rounded-lg bg-[#fff] h-full shadow-[0px_1px_3px_0px_rgba(0,0,0,0.12)] p-3 lg:p-5 border-[1px] border-solid border-[#E1E1E1]">
           {/* top part */}
           <div className="flex items-start gap-3 w-full">
@@ -135,7 +136,9 @@ const Task = ({ taskInfo }) => {
               </div>
 
               {/* value */}
-              <p className="text-sm text-headingColor">{taskInfo.date}</p>
+              <p className="text-sm text-headingColor">
+                {moment(taskInfo.date).format("dddd, MMMM D - YYYY")}
+              </p>
             </div>
 
             {/* status */}
@@ -153,11 +156,11 @@ const Task = ({ taskInfo }) => {
                 className={`text-sm font-medium`}
               >
                 {" "}
-                {taskInfo.status === "pending"
+                {taskInfo.status.toLowerCase() === "pending"
                   ? "Pending"
-                  : taskInfo.status === "progress"
+                  : taskInfo.status.toLowerCase() === "ongoing"
                   ? "InProgress"
-                  : taskInfo.status === "done"
+                  : taskInfo.status.toLowerCase() === "done"
                   ? "Done"
                   : ""}{" "}
               </p>

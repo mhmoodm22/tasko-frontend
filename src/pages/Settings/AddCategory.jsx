@@ -36,12 +36,12 @@ const AddCategory = ({ isActive, setIsActive, refetchData }) => {
 
   return (
     <div
-      className={`fixed w-full h-screen top-0 left-0 bg-[rgba(0,0,0,.4)] flex items-center justify-center duration-300 ease-in-out ${
+      className={`fixed w-full h-screen top-0 left-0 bg-[rgba(0,0,0,.4)] flex items-center justify-center duration-300 ease-in-out px-2 lg:px-0 ${
         isActive ? "" : "opacity-0 invisible"
       }`}
     >
       {/* content */}
-      <div className="w-[420px] h-[245px] bg-[#fff] rounded-[20px] flex flex-col py-[42px] gap-3 items-center relative">
+      <div className=" w-full lg:w-[420px] h-[245px] bg-[#fff] rounded-[20px] flex flex-col py-[42px] gap-3 items-center relative">
         <h3 className="text-2xl leading-8 font-semibold text-headingColor">
           Add New Category
         </h3>
