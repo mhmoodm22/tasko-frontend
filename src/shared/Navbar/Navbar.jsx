@@ -51,8 +51,8 @@ const Navbar = () => {
   useEffect(() => {
     document.addEventListener("click", (event) => {
       if (
-        !sidebar?.current.contains(event.target) &&
-        !sidebarTriggerBtn?.current.contains(event.target)
+        !sidebar?.current?.contains(event.target) &&
+        !sidebarTriggerBtn?.current?.contains(event.target)
       ) {
         setIsSideBarActive(false);
       }

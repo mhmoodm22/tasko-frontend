@@ -14,23 +14,32 @@ function TaskList({ selectedCategory, selectedStatus }) {
 
   const axiosSecure = useAxiosSecure();
 
-  // console.log(selectedCategory);
-  // console.log(selectedStatus);
-
   // getting all the tasks
   const { data, isLoading } = useQuery({
     queryKey: ["mainTasks", selectedCategory, selectedStatus],
 
     queryFn: async () => {
       if (selectedCategory) {
-        const res = await axiosSecure.get(
-          `/tasks/category?category=${selectedCategory.catName}&userID=${user.userId}`
-        );
+        if (selectedCategory.catName === "All Category") {
+          const res = await axiosSecure.get(`/tasks?userID=${user.userId}`);
 
-        return res.data;
+          return res.data;
+        } else {
+          const res = await axiosSecure.get(
+            `/tasks/category?category=${selectedCategory.catName}&userID=${user.userId}`
+          );
+
+          return res.data;
+        }
       } else if (selectedStatus) {
         if (selectedStatus.statusTitle === "All Task") {
           const res = await axiosSecure.get(`/tasks?userID=${user.userId}`);
+
+          return res.data;
+        } else if (selectedStatus.statusTitle === "Collaborative Task") {
+          const res = await axiosSecure.get(
+            `/tasks/collaborated?userID=${user.userId}`
+          );
 
           return res.data;
         } else {

@@ -22,8 +22,6 @@ export default function AddFriends() {
     },
   });
 
-  console.log(data);
-
   const newFriendsData = [
     {
       id: 1,

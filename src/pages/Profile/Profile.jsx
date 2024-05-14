@@ -64,19 +64,20 @@ const Profile = () => {
     },
   ];
 
+  let { user, setUser, customUserRefetch, setCustomUserRefetch } =
+    useAuthContext();
+  const axiosSecure = useAxiosSecure();
+
   // eslint-disable-next-line
   const [badgeList, setBadgeList] = useState(badges);
 
   const [uploadedImage, setUploadedImage] = useState(null);
   // eslint-disable-next-line
-  const [updatedName, setUpdatedName] = useState(null);
+  const [updatedName, setUpdatedName] = useState(user.userName);
 
   const [isPopUpActive, setIsPopUpActive] = useState(false);
 
   const nameInput = useRef(null);
-
-  let { user, setUser } = useAuthContext();
-  const axiosSecure = useAxiosSecure();
 
   // drop zone functionality
   const onDrop = useCallback((acceptedFiles) => {
@@ -101,29 +102,32 @@ const Profile = () => {
   });
 
   const handleUpdate = () => {
+    const formData = new FormData();
+
     if (uploadedImage) {
-      const formData = new FormData();
-
       formData.append("file", uploadedImage);
+    }
 
-      axiosSecure
-        .post(`/users/change-image?id=${user.userId}`, formData, {
+    axiosSecure
+      .post(
+        `/users/change-image-name?name=${updatedName}&userId=${user.userId}`,
+        formData,
+        {
           headers: {
             "Content-Type": "multipart/form-data",
           },
-        })
-        .then((res) => {
-          // adding the image we got in response , to see the changes immediately
-          setUser({ ...user, img: res.data.img });
-          toast.success("Updated Data Successfully");
+        }
+      )
+      .then((res) => {
+        // adding the image we got in response , to see the changes immediately
+        setUser({ ...user, img: res.data.img });
+        toast.success("Updated Data Successfully");
+        setCustomUserRefetch(!customUserRefetch);
 
-          setUploadedImage(null);
-          setIsPopUpActive(false);
-        })
-        .catch((err) => toast.error(err.message));
-    } else {
-      toast.error("Please Update Something ");
-    }
+        setUploadedImage(null);
+        setIsPopUpActive(false);
+      })
+      .catch((err) => toast.error(err.message));
   };
 
   return (
@@ -184,34 +188,40 @@ const Profile = () => {
 
               {/* badges holder */}
 
-              <div className="flex items-center gap-6 pt-5 flex-wrap lg:flex-nowrap justify-center ">
-                {badgeList.map((item, index) => (
-                  <div key={index} className="w-fit">
-                    <div
-                      style={{
-                        backgroundColor: item.bgColor,
-                      }}
-                      className=" w-[52px] h-[52px] lg:w-[82px]   lg:h-[82px] rounded-full flex items-center justify-center"
-                    >
-                      <img
-                        className="w-10 h-10 object-contain"
-                        src={item.badgeIcon}
-                        alt=""
-                      />
-                    </div>
+              <div className="flex items-center gap-6 pt-5 flex-wrap lg:flex-nowrap lg:justify-start justify-center ">
+                {user.labelIndex > 0 ? (
+                  badgeList.slice(0, user.labelIndex - 1).map((item, index) => (
+                    <div key={index} className="w-fit">
+                      <div
+                        style={{
+                          backgroundColor: item.bgColor,
+                        }}
+                        className=" w-[52px] h-[52px] lg:w-[82px]   lg:h-[82px] rounded-full flex items-center justify-center"
+                      >
+                        <img
+                          className="w-10 h-10 object-contain"
+                          src={item.badgeIcon}
+                          alt=""
+                        />
+                      </div>
 
-                    {/* text */}
-                    <p
-                      style={{
-                        color: item.textColor,
-                      }}
-                      className="text-center text-sm font-medium pt-2 "
-                    >
-                      {" "}
-                      {item.badgeName}{" "}
-                    </p>
-                  </div>
-                ))}
+                      {/* text */}
+                      <p
+                        style={{
+                          color: item.textColor,
+                        }}
+                        className="text-center text-sm font-medium pt-2 "
+                      >
+                        {" "}
+                        {item.badgeName}{" "}
+                      </p>
+                    </div>
+                  ))
+                ) : (
+                  <p className="py-3 text-2xl font-semibold text-paraLight">
+                    No Badge Available{" "}
+                  </p>
+                )}
               </div>
             </div>
           </div>
@@ -350,6 +360,7 @@ const Profile = () => {
 
             <input
               ref={nameInput}
+              onChange={(event) => setUpdatedName(event.target.value)}
               type="text"
               placeholder="Enter your user name"
               className="px-[22px] py-3 rounded border border-solid border-[#E1E1E1] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.12)] placeholder:text-[#667085] text-base text-headingColor focus:outline-none w-full"

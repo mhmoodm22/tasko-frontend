@@ -14,11 +14,15 @@ import NoContent from "../../components/NoContent/NoContent";
 const Spin = () => {
   const axiosSecure = useAxiosSecure();
   const { user } = useAuthContext();
+  const navigate = useNavigate();
 
   const [allTask, setAllTask] = useState(null);
   const [taskSegments, setTaskSegments] = useState(null);
   const [selectedTask, setSelectedTask] = useState(null);
-  const navigate = useNavigate();
+  const [selectedCategory, setSelectedCategory] = useState(null);
+
+  const [showInstruction, setShowInstruction] = useState(true);
+  const [selectedResult, setSelectedResult] = useState(null);
 
   // generating random colors for spinner
   function generateRandomColor() {
@@ -27,11 +31,24 @@ const Spin = () => {
   }
 
   const { data, isLoading } = useQuery({
-    queryKey: ["allSpinTask"],
+    queryKey: ["allSpinTask", selectedCategory],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/tasks?userID=${user.userId}`);
+      if (selectedCategory) {
+        if (selectedCategory.catName === "All Category") {
+          const res = await axiosSecure.get(`/tasks?userID=${user.userId}`);
 
-      return res.data;
+          return res.data;
+        } else {
+          const res = await axiosSecure.get(
+            `/tasks/category?category=${selectedCategory.catName}&userID=${user.userId}`
+          );
+          return res.data;
+        }
+      } else {
+        const res = await axiosSecure.get(`/tasks?userID=${user.userId}`);
+
+        return res.data;
+      }
     },
   });
 
@@ -42,7 +59,9 @@ const Spin = () => {
   // setting the all task into segement format
   useEffect(() => {
     if (allTask) {
-      const taskSegments = allTask.map((item) => {
+      const filteredTasks = allTask.filter((item) => item.status !== "Done");
+
+      const taskSegments = filteredTasks.map((item) => {
         return {
           segmentText: item.title,
           segColor: generateRandomColor(),
@@ -53,9 +72,6 @@ const Spin = () => {
       setTaskSegments(taskSegments);
     }
   }, [allTask]);
-
-  const [showInstruction, setShowInstruction] = useState(true);
-  const [selectedResult, setSelectedResult] = useState(null);
 
   // function to handle finish
   const handleSpinFinish = (result) => {
@@ -70,8 +86,6 @@ const Spin = () => {
     setShowInstruction(false);
     setSelectedResult(result);
   };
-
-  const [selectedCategory, setSelectedCategory] = useState(null);
 
   const spinWheelProps = {
     onFinished: handleSpinFinish,
@@ -88,7 +102,6 @@ const Spin = () => {
     isSpinSound: false,
   };
 
-  console.log(taskSegments);
   return (
     <div>
       {/* top part */}
@@ -114,7 +127,7 @@ const Spin = () => {
       {isLoading ? (
         <Loader />
       ) : taskSegments && taskSegments.length > 0 ? (
-        taskSegments.length < 2 ? (
+        taskSegments.length <= 2 ? (
           // checking if the user has more than 2 task
           <NoContent text="You have to add at least 3 task for the Spin" />
         ) : (

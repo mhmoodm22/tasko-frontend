@@ -13,11 +13,12 @@ import useAxiosSecure from "../../hooks/useAxiosSecure";
 import moment from "moment";
 import toast from "react-hot-toast";
 import useAuthContext from "../../hooks/useAuthContext";
+import defaultProfile from "../../assets/images/default-profile.png";
 
 const SingleTask = () => {
   const { id } = useParams();
 
-  const { user, setCustomUserRefetch } = useAuthContext();
+  const { user, customUserRefetch, setCustomUserRefetch } = useAuthContext();
 
   const navigate = useNavigate();
   const axiosSecure = useAxiosSecure();
@@ -26,10 +27,12 @@ const SingleTask = () => {
   // eslint-disable-next-line
   const [selectedStatus, setSelectedStatus] = useState(null);
 
-  console.log(selectedStatus);
-
   const [deleteTask, setDeleteTask] = useState(null);
   const [confirmDelete, setConfirmDelete] = useState(null);
+
+  // assigned with
+  const [assignedLoading, setAssignedLoading] = useState(true);
+  const [assignUser, setAssignUser] = useState(null);
 
   // using query
   const {
@@ -45,8 +48,6 @@ const SingleTask = () => {
       return res.data;
     },
   });
-
-  console.log(taskInfo);
 
   const pending = "#E343E6";
   const progress = "#DD9221";
@@ -100,7 +101,7 @@ const SingleTask = () => {
           if (res.status === 200) {
             if (res.data.status === "Done") {
               setSubmitPopUP(true);
-              setCustomUserRefetch(true);
+              setCustomUserRefetch(!customUserRefetch);
             } else {
               toast.success("Task Status Updated");
             }
@@ -110,6 +111,22 @@ const SingleTask = () => {
         .catch((err) => toast.error(err.message));
     }
   };
+
+  useEffect(() => {
+    if (taskInfo?.collaboators[0]?.friendId === user.userId) {
+      axiosSecure
+        .get(`/users?id=${taskInfo?.collaboators[0]?.userId}`)
+        .then((res) => {
+          setAssignUser(res.data);
+          setAssignedLoading(false);
+        })
+        .catch((err) => console.log(err));
+    } else {
+      setAssignedLoading(false);
+    }
+
+    // eslint-disable-next-line
+  }, [taskInfo, user]);
 
   return (
     <div className="h-full">
@@ -262,33 +279,61 @@ const SingleTask = () => {
                   </div>
                 </div>
                 {/* collaboration area */}
-                {taskInfo.isCollaborator ? (
-                  <div className="border-l border-solid border-[#E1E1E1] px-10 border-r">
+                {taskInfo.collaboators.length > 0 ? (
+                  <div className="border-x border-solid border-[#E1E1E1] px-10 ">
                     <p className="pb-4 text-[18px] font-semibold">
-                      Assigned Friends
+                      Collaborated With
                     </p>
 
                     {/* profile */}
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-8 h-8 rounded-full overflow-hidden">
-                        <img
-                          className="w-full h-full object-cover"
-                          src={taskInfo?.collaborator?.profile_img}
-                          alt=""
-                        />
+                    {!assignedLoading && assignUser ? (
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full overflow-hidden">
+                          <img
+                            className="w-full h-full object-cover"
+                            src={
+                              assignUser.img
+                                ? `data:image/jpeg;base64,${assignUser.img}`
+                                : defaultProfile
+                            }
+                            alt=""
+                          />
+                        </div>
+                        <p className="text-xl leading-[33px] text-headingColor">
+                          {" "}
+                          {assignUser.userName}{" "}
+                        </p>
                       </div>
-                      <p className="text-xl leading-[33px] text-headingColor">
-                        {" "}
-                        {taskInfo.collaborator.profile_name}{" "}
-                      </p>
-                    </div>
+                    ) : (
+                      <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full overflow-hidden">
+                          <img
+                            className="w-full h-full object-cover"
+                            src={
+                              taskInfo.collaboators[0].img
+                                ? `data:image/jpeg;base64,${taskInfo.collaboators[0].img}`
+                                : defaultProfile
+                            }
+                            alt=""
+                          />
+                        </div>
+                        <p className="text-xl leading-[33px] text-headingColor">
+                          {" "}
+                          {taskInfo.collaboators[0].userName}{" "}
+                        </p>
+                      </div>
+                    )}
                   </div>
                 ) : (
                   ""
                 )}
 
                 {/* task status */}
-                <div className="flex items-center gap-4 border-l-2  pl-10">
+                <div
+                  className={`flex items-center gap-4 ${
+                    taskInfo.collaboators.length > 0 ? "" : "border-l-2  pl-10"
+                  }`}
+                >
                   <p
                     style={{
                       backgroundColor: currentColor,

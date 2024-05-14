@@ -14,6 +14,7 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../hooks/useAxiosSecure";
 import toast from "react-hot-toast";
 import CongratsPopUp from "../../components/PopUp/CongratsPopUp";
+import defaultProfile from "../../assets/images/default-profile.png";
 
 const CalendarPrevNextIcon = () => {
   return (
@@ -47,29 +48,6 @@ const AddTask = () => {
   const commonInputStyle =
     "px-[22px] py-3 rounded border border-solid border-[#E1E1E1] shadow-[0px_1px_3px_0px_rgba(0,0,0,0.12)] placeholder:text-[#667085] text-base text-headingColor focus:outline-none w-full";
 
-  const collabs = [
-    {
-      name: "ben",
-      profile: "https://i.ibb.co/2hK5yXw/Mask-group.png",
-    },
-    {
-      name: "carl",
-      profile: "https://i.ibb.co/2hK5yXw/Mask-group.png",
-    },
-    {
-      name: "lisa",
-      profile: "https://i.ibb.co/2hK5yXw/Mask-group.png",
-    },
-    {
-      name: "john",
-      profile: "https://i.ibb.co/2hK5yXw/Mask-group.png",
-    },
-    {
-      name: "stake",
-      profile: "https://i.ibb.co/2hK5yXw/Mask-group.png",
-    },
-  ];
-
   // fetching task category
   const { data: taskCats } = useQuery({
     queryKey: ["taskCats"],
@@ -80,15 +58,12 @@ const AddTask = () => {
     },
   });
 
-  // eslint-disable-next-line
-  const [assignTaskOptions, setAssignTaskOptions] = useState(collabs);
-
   const [isTaskCatActive, setIsTaskCatActive] = useState(false);
   const [isAssignTaskActive, setIsAssignTaskActive] = useState(false);
 
   const [taskCatSelected, setTaskCatSelected] = useState("");
   // eslint-disable-next-line
-  const [taskAssignSelected, setTaskAssignSelected] = useState("");
+  const [taskAssignSelected, setTaskAssignSelected] = useState(null);
 
   const taskCatInput = document.querySelector(".add--task--input");
   const taskAssignInput = document.querySelector(".assign--task--input");
@@ -134,7 +109,7 @@ const AddTask = () => {
   };
   //handle the assign select
   const handleCollaboratorSelect = (value) => {
-    setValue("collaborator", value);
+    setValue("collaborator", value.friendName);
   };
 
   const onSubmit = (data) => {
@@ -149,15 +124,13 @@ const AddTask = () => {
       description: data.description,
       title: data.title,
       userId: user.userId,
+      collaboratorsId: taskAssignSelected ? [taskAssignSelected.friendId] : [],
     };
-
-    console.log(taskInfo);
 
     // adding task to the database
     axiosSecure
       .post("/tasks", taskInfo)
       .then((res) => {
-        console.log(res);
         if (res.status === 200) {
           reset();
           setTaskCatSelected(null);
@@ -170,6 +143,19 @@ const AddTask = () => {
         toast.error(err.message);
       });
   };
+
+  // getting the friend list on the collaborators
+
+  const { data: collaborators, isLoading: isCollaboratorLoading } = useQuery({
+    queryKey: ["collaborators"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/friend/getlist?userId=${user.userId}`
+      );
+
+      return res.data;
+    },
+  });
 
   return (
     <section className="h-full flex flex-col">
@@ -298,53 +284,67 @@ const AddTask = () => {
                   (Optional)
                 </p>{" "}
               </div>
-              <div className="dropdown-selects relative">
-                <input
-                  onClick={() => {
-                    setIsAssignTaskActive(!isAssignTaskActive);
-                  }}
-                  className={`${commonInputStyle} capitalize ${
-                    assignTaskOptions ? "" : "pointer-events-none opacity-50"
-                  } assign--task--input`}
-                  type="text"
-                  placeholder="Select People"
-                  readOnly
-                  {...register("collaborator")}
-                />
+              {!isCollaboratorLoading && (
+                <div className="dropdown-selects relative">
+                  <input
+                    onClick={() => {
+                      setIsAssignTaskActive(!isAssignTaskActive);
+                    }}
+                    className={`${commonInputStyle} ${
+                      collaborators.length > 0
+                        ? ""
+                        : "pointer-events-none opacity-50"
+                    } capitalize assign--task--input`}
+                    type="text"
+                    placeholder="Select People"
+                    readOnly
+                    {...register("collaborator")}
+                  />
 
-                {/* lists */}
-                <ul
-                  className={`absolute bg-[#fff] top-[80px]  right-0 px-[14px] py-[6px] z-10 shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-lg duration-300 ease-in-out w-[220px]  space-y-2 ${
-                    isAssignTaskActive
-                      ? "opacity-100 visible top-[60px]"
-                      : "opacity-0 invisible top-[80px]"
-                  } `}
-                >
-                  {assignTaskOptions &&
-                    assignTaskOptions.map((item, index) => (
-                      <li
-                        className={`px-3 py-2 cursor-pointer flex items-center gap-2 rounded ${
-                          taskCatSelected === item.name ? "bg-[#E7FBF3]" : ""
-                        }`}
-                        key={index}
-                        onClick={() => {
-                          setTaskCatSelected(item.name);
-                          handleCollaboratorSelect(item.name);
-                          setIsAssignTaskActive(false);
-                        }}
-                      >
-                        <img
-                          className="w-5 h-5 rounded-full object-cover"
-                          src={item.profile}
-                          alt=""
-                        />
-                        <p className="text-sm leading-4 capitalize text-[rgba(6,17,10,0.50)] ">
-                          {item.name}
-                        </p>
-                      </li>
-                    ))}
-                </ul>
-              </div>
+                  {/* lists */}
+                  <ul
+                    className={`absolute bg-[#fff] top-[80px] h-[180px] overflow-y-auto right-0 px-[14px] py-[6px] z-10 shadow-[25px_23px_68px_0px_rgba(10,48,61,0.06)] rounded-lg duration-300 ease-in-out w-[220px]  space-y-2 ${
+                      isAssignTaskActive
+                        ? "opacity-100 visible top-[60px]"
+                        : "opacity-0 invisible top-[80px]"
+                    } `}
+                  >
+                    {collaborators && collaborators.length > 0 ? (
+                      collaborators.map((singlePerson, index) => (
+                        <li
+                          className={`px-3 py-2 cursor-pointer flex items-center gap-2 rounded ${
+                            taskAssignSelected?.friendName ===
+                            singlePerson.friendName
+                              ? "bg-[#E7FBF3]"
+                              : ""
+                          }`}
+                          key={index}
+                          onClick={() => {
+                            handleCollaboratorSelect(singlePerson);
+                            setTaskAssignSelected(singlePerson);
+                            setIsAssignTaskActive(false);
+                          }}
+                        >
+                          <img
+                            className="w-6 h-6 rounded-full object-cover"
+                            src={
+                              singlePerson.img
+                                ? `data:image/jpeg;base64,${singlePerson.img}`
+                                : defaultProfile
+                            }
+                            alt=""
+                          />
+                          <p className="text-sm leading-4 capitalize text-[rgba(6,17,10,0.50)] ">
+                            {singlePerson.friendName}
+                          </p>
+                        </li>
+                      ))
+                    ) : (
+                      <li>No one to add</li>
+                    )}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* text field */}

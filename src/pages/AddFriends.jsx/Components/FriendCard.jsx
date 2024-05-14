@@ -2,14 +2,27 @@ import { useState } from "react";
 import Badge from "../../../assets/images/badge.png";
 import defaultProfile from "../../../assets/images/default-profile.png";
 import PropTypes from "prop-types";
+import useAuthContext from "../../../hooks/useAuthContext";
+import useAxiosSecure from "../../../hooks/useAxiosSecure";
+import toast from "react-hot-toast";
 
 export default function FriendCard({ singleInfo }) {
+  const axiosSecure = useAxiosSecure();
+  const { user } = useAuthContext();
+
   const [isSent, setIsSent] = useState(null);
 
   console.log(singleInfo);
 
   const handleRequestSent = (userId) => {
-    setIsSent(userId);
+    axiosSecure
+      .post(`/friend/sendRequest?friendId=${userId}&userId=${user.userId}`)
+      .then((res) => {
+        if (res.status === 200) {
+          setIsSent(userId);
+        }
+      })
+      .catch((err) => toast.error(err.message));
   };
 
   return (
